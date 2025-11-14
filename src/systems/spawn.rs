@@ -27,6 +27,7 @@ pub fn update(state: &mut PlayingState, dt: f32) {
         let mut rng = rand::rng();
 
         o.position.x = rng.random_range(0..V_WIDTH) as f32;
+        o.direction.y = 1.0;
         o.speed = rng.random_range(params.speed_range.0..=params.speed_range.1);
         o.rel_speed = state.speed;
         o.rel_sign = 1.0;

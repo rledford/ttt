@@ -16,6 +16,7 @@ pub struct Obstacle {
     pub speed: f32,
     pub rel_speed: f32, // relative to world speed
     pub rel_sign: f32,  // relative to world direction
+    pub is_in_destruction_range: bool,
 }
 
 impl Obstacle {
@@ -46,6 +47,7 @@ impl Obstacle {
                 speed: 0.0,
                 rel_speed: 0.0,
                 rel_sign: 1.0,
+                is_in_destruction_range: false,
             },
             ObstacleType::FlockOfBirds => Obstacle {
                 kind,
@@ -60,6 +62,7 @@ impl Obstacle {
                 speed: 0.0,
                 rel_speed: 0.0,
                 rel_sign: 1.0,
+                is_in_destruction_range: false,
             },
             ObstacleType::WeatherBallon => Obstacle {
                 kind,
@@ -74,6 +77,7 @@ impl Obstacle {
                 speed: 0.0,
                 rel_speed: 0.0,
                 rel_sign: 1.0,
+                is_in_destruction_range: false,
             },
 
             ObstacleType::Drone => Obstacle {
@@ -89,6 +93,7 @@ impl Obstacle {
                 speed: 0.0,
                 rel_speed: 0.0,
                 rel_sign: 1.0,
+                is_in_destruction_range: false,
             },
         }
     }

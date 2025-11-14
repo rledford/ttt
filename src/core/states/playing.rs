@@ -1,7 +1,10 @@
 use raylib::prelude::*;
 
 use crate::{
-    core::game_state::{GameState, V_HEIGHT, V_WIDTH},
+    core::{
+        game_state::{GameState, V_HEIGHT, V_WIDTH},
+        perk::{Perk, PerkData, PerkType},
+    },
     entities::{obstacle::Obstacle, player::Player},
     systems::input::InputState,
 };
@@ -16,12 +19,16 @@ pub struct PlayingState {
     pub boost: f32,
     pub boost_bonus: f32,
     pub boost_decay: f32,
+    pub last_boost_activation_time: f64,
+    pub destruction_range: f32,
     pub destruction_window: f32,
     pub destruction_window_timer: f32,
     pub distance_traveled: f32,
 
     pub player: Player,
     pub obstacles: Vec<Obstacle>,
+
+    pub perks: Vec<Perk>,
 }
 
 impl Default for PlayingState {
@@ -42,6 +49,8 @@ impl PlayingState {
             boost: 0.0,
             boost_bonus: 0.0,
             boost_decay: 0.85,
+            last_boost_activation_time: 0.0,
+            destruction_range: 64.0,
             destruction_window: 0.5,
             destruction_window_timer: 0.0,
             distance_traveled: 0.0,
@@ -52,15 +61,44 @@ impl PlayingState {
                 },
                 aabb: Rectangle::new(0.0, 0.0, 24.0, 32.0),
             },
+
             obstacles: vec![],
+            perks: vec![Perk {
+                kind: PerkType::Shield,
+                duration: None,
+                stacks: 1,
+                data: PerkData::Shield {
+                    max_charges: 1,
+                    charges: 1,
+                    recharge_time: 1.0,
+                    recharge_timer: 1.0,
+                },
+            }],
         }
+    }
+
+    pub fn try_consume_shield(&mut self) -> bool {
+        for p in &mut self.perks {
+            match &mut p.data {
+                PerkData::Shield { charges, .. } => {
+                    if *charges > 0 {
+                        *charges -= 1;
+                        println!("BLOCKED!");
+                        return true;
+                    }
+                }
+            }
+        }
+
+        false
     }
 }
 
-pub fn update(state: &mut PlayingState, input: &InputState, dt: f32) -> Option<GameState> {
-    crate::systems::boost::update(state, input, dt);
+pub fn update(state: &mut PlayingState, input: &InputState, dt: f32, gt: f64) -> Option<GameState> {
+    crate::systems::perk::update(state, dt);
+    crate::systems::boost::update(state, input, dt, gt);
     crate::systems::physics::update(state, dt);
-    crate::systems::combat::update(state, dt);
+    crate::systems::combat::update(state, dt, gt);
     crate::systems::spawn::update(state, dt);
 
     None

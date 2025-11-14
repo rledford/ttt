@@ -6,7 +6,7 @@ use crate::{
     systems::input::InputState,
 };
 
-pub fn update(state: &mut PlayingState, input: &InputState, dt: f32) {
+pub fn update(state: &mut PlayingState, input: &InputState, dt: f32, gt: f64) {
     let zone_meta = game_zone::get_zone_meta_for_distance(state.distance_traveled);
 
     if input.boost_pressed {
@@ -16,6 +16,7 @@ pub fn update(state: &mut PlayingState, input: &InputState, dt: f32) {
     if input.boost_released {
         state.boost_bonus = 0.0;
         state.destruction_window_timer = 0.0;
+        state.last_boost_activation_time = gt;
     }
 
     if input.boost_held {

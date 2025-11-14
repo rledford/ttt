@@ -50,8 +50,9 @@ impl GameStateManager {
             }
             GameState::Playing => {
                 if let Some(state) = &mut self.playing_state {
+                    let gt = rl.get_time();
                     let input = &crate::systems::input::read_input(rl);
-                    let result = crate::core::states::playing::update(state, input, dt);
+                    let result = crate::core::states::playing::update(state, input, dt, gt);
 
                     if let Some(new_state) = result {
                         self.transition_to(new_state);
@@ -109,7 +110,13 @@ impl GameStateManager {
                                 ObstacleType::Drone => Color::DARKORCHID,
                             };
 
-                            d.draw_rectangle_rec(o.collider(), color);
+                            let collider = o.collider();
+
+                            d.draw_rectangle_rec(collider, color);
+
+                            if o.is_in_destruction_range {
+                                d.draw_rectangle_lines_ex(collider, 2.0, Color::WHITE);
+                            }
                         }
 
                         for i in 0..state.max_hp {
