@@ -11,6 +11,7 @@ pub fn update(state: &mut PlayingState, dt: f32, gt: f64) {
         if idx < state.obstacles.len() {
             if state.destruction_window_timer > 0.0 {
                 println!("DESTRUCTION!");
+                state.player.trigger_boost_burst();
                 state.heat = (state.heat - 10.0).max(0.0);
                 let elapsed_destruction_activation_time = gt - state.last_boost_activation_time;
                 let max_bonus_time = (state.destruction_window * 0.4) as f64;

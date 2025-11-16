@@ -17,7 +17,6 @@ pub fn update(state: &mut PlayingState, input: &InputState, dt: f32, gt: f64) {
 
     if input.boost_pressed {
         state.destruction_window_timer = state.destruction_window;
-        state.player.trigger_boost_burst();
     }
 
     if input.boost_released {

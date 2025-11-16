@@ -214,7 +214,7 @@ pub fn get_particle_velocity(
 }
 
 pub const BOOST_EMITTER_CONFIG: ParticleEmitterConfig = ParticleEmitterConfig {
-    emission_rate: 10.0,
+    emission_rate: 5.0,
     burst_count: 50,
     min_speed: 5.0,
     max_speed: 25.0,

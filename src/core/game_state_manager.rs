@@ -90,8 +90,17 @@ impl GameStateManager {
                     d.clear_background(Color::BLACK);
 
                     if let Some(state) = &self.playing_state {
-                        let zone_meta =
-                            game_zone::get_zone_meta_for_distance(state.distance_traveled);
+                        for p in state.player.left_boost.active_particles() {
+                            let t = p.age / p.lifetime;
+                            let scale = p.start_scale * (1.0 - t) + p.end_scale * t;
+                            d.draw_circle_v(p.position, scale, p.color);
+                        }
+
+                        for p in state.player.right_boost.active_particles() {
+                            let t = p.age / p.lifetime;
+                            let scale = p.start_scale * (1.0 - t) + p.end_scale * t;
+                            d.draw_circle_v(p.position, scale, p.color);
+                        }
 
                         {
                             let color = if state.destruction_window_timer > 0.0 {
@@ -127,17 +136,8 @@ impl GameStateManager {
                             }
                         }
 
-                        for p in state.player.left_boost.active_particles() {
-                            let t = p.age / p.lifetime;
-                            let scale = p.start_scale * (1.0 - t) + p.end_scale * t;
-                            d.draw_circle_v(p.position, scale, p.color);
-                        }
-
-                        for p in state.player.right_boost.active_particles() {
-                            let t = p.age / p.lifetime;
-                            let scale = p.start_scale * (1.0 - t) + p.end_scale * t;
-                            d.draw_circle_v(p.position, scale, p.color);
-                        }
+                        let zone_meta =
+                            game_zone::get_zone_meta_for_distance(state.distance_traveled);
 
                         d.draw_text(
                             &format!("Speed: {:.0}", state.speed),
