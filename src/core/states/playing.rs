@@ -1,9 +1,7 @@
-use raylib::prelude::*;
-
 use crate::{
     core::{
         game_state::{GameState, V_HEIGHT, V_WIDTH},
-        perk::{Perk, PerkData, PerkType},
+        perk::{Perk, PerkData, PerkType, StatModifiers},
     },
     entities::{obstacle::Obstacle, player::Player},
     systems::input::InputState,
@@ -13,12 +11,9 @@ pub struct PlayingState {
     pub hp: i32,
     pub max_hp: i32,
     pub heat: f32,
-    pub heat_per_boost: f32,
-    pub heat_decay: f32,
     pub speed: f32,
     pub boost: f32,
     pub boost_bonus: f32,
-    pub boost_decay: f32,
     pub last_boost_activation_time: f64,
     pub destruction_range: f32,
     pub destruction_window: f32,
@@ -29,6 +24,7 @@ pub struct PlayingState {
     pub obstacles: Vec<Obstacle>,
 
     pub perks: Vec<Perk>,
+    pub stat_mods: StatModifiers,
 }
 
 impl Default for PlayingState {
@@ -43,24 +39,15 @@ impl PlayingState {
             hp: 5,
             max_hp: 5,
             heat: 0.0,
-            heat_per_boost: 10.0,
-            heat_decay: 12.0,
             speed: 0.0,
             boost: 0.0,
             boost_bonus: 0.0,
-            boost_decay: 0.85,
             last_boost_activation_time: 0.0,
             destruction_range: 64.0,
             destruction_window: 0.5,
             destruction_window_timer: 0.0,
             distance_traveled: 0.0,
-            player: Player {
-                position: Vector2 {
-                    x: (V_WIDTH as f32) * 0.5,
-                    y: (V_HEIGHT as f32) * 0.8,
-                },
-                aabb: Rectangle::new(0.0, 0.0, 24.0, 32.0),
-            },
+            player: Player::new((V_WIDTH as f32) * 0.5, (V_HEIGHT as f32) * 0.8),
 
             obstacles: vec![],
             perks: vec![Perk {
@@ -74,6 +61,7 @@ impl PlayingState {
                     recharge_timer: 1.0,
                 },
             }],
+            stat_mods: StatModifiers::default(),
         }
     }
 
@@ -100,6 +88,7 @@ pub fn update(state: &mut PlayingState, input: &InputState, dt: f32, gt: f64) ->
     crate::systems::physics::update(state, dt);
     crate::systems::combat::update(state, dt, gt);
     crate::systems::spawn::update(state, dt);
+    crate::systems::particle::update(state, dt);
 
     None
 }

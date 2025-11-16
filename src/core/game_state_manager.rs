@@ -127,6 +127,18 @@ impl GameStateManager {
                             }
                         }
 
+                        for p in state.player.left_boost.active_particles() {
+                            let t = p.age / p.lifetime;
+                            let scale = p.start_scale * (1.0 - t) + p.end_scale * t;
+                            d.draw_circle_v(p.position, scale, p.color);
+                        }
+
+                        for p in state.player.right_boost.active_particles() {
+                            let t = p.age / p.lifetime;
+                            let scale = p.start_scale * (1.0 - t) + p.end_scale * t;
+                            d.draw_circle_v(p.position, scale, p.color);
+                        }
+
                         d.draw_text(
                             &format!("Speed: {:.0}", state.speed),
                             0,
