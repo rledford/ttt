@@ -16,21 +16,9 @@ pub fn update(state: &mut PlayingState, dt: f32) {
     state.distance_traveled += state.speed * dt;
 
     for o in &mut state.obstacles {
-        o.position += o.direction * o.speed * dt;
+        let world_drift = (state.speed - o.rel_speed) * dt;
 
-        let speed_delta = state.speed - o.rel_speed;
-
-        if speed_delta != 0.0 {
-            let mut rel_speed = o.speed + speed_delta;
-
-            rel_speed = if o.rel_sign > 0.0 {
-                rel_speed.max(0.0)
-            } else {
-                rel_speed.min(0.0)
-            };
-
-            o.position.y += rel_speed * dt;
-        }
+        o.position.y += world_drift;
 
         let closest_face_dist = get_closest_face_distance(&o.collider(), &player_collider);
 

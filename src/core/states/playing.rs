@@ -85,6 +85,7 @@ impl PlayingState {
 pub fn update(state: &mut PlayingState, input: &InputState, dt: f32, gt: f64) -> Option<GameState> {
     crate::systems::perk::update(state, dt);
     crate::systems::boost::update(state, input, dt, gt);
+    crate::systems::movement::update(state, dt);
     crate::systems::physics::update(state, dt);
     crate::systems::combat::update(state, dt, gt);
     crate::systems::spawn::update(state, dt);

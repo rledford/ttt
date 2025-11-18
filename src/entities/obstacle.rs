@@ -1,11 +1,45 @@
 use raylib::prelude::*;
 
 #[derive(Clone, Copy)]
+pub enum MovementAxis {
+    Horizontal,
+    Vertical,
+}
+
+#[derive(Clone, Copy)]
+pub enum MovementPattern {
+    Static,
+    LinearHorizontal,
+    LinearVertical,
+    LinearDiagnal,
+    Sinwave {
+        axis: MovementAxis,
+        frequency: f32,
+        amplitude: f32,
+    },
+    Circular {
+        radius: f32,
+        clockwise: bool,
+    },
+}
+
+#[derive(Clone, Copy)]
 pub enum ObstacleType {
     LaunchDebris,
     FlockOfBirds,
     WeatherBallon,
     Drone,
+}
+
+impl ObstacleType {
+    pub fn aabb(&self) -> Rectangle {
+        match self {
+            ObstacleType::LaunchDebris => Rectangle::new(0.0, 0.0, 26.0, 20.0),
+            ObstacleType::FlockOfBirds => Rectangle::new(0.0, 0.0, 40.0, 24.0),
+            ObstacleType::WeatherBallon => Rectangle::new(0.0, 0.0, 50.0, 60.0),
+            ObstacleType::Drone => Rectangle::new(0.0, 0.0, 20.0, 20.0),
+        }
+    }
 }
 
 pub struct Obstacle {
@@ -17,6 +51,10 @@ pub struct Obstacle {
     pub rel_speed: f32, // relative to world speed
     pub rel_sign: f32,  // relative to world direction
     pub is_in_destruction_range: bool,
+
+    pub movement_pattern: MovementPattern,
+    pub movement_time: f32,
+    pub spawn_position: Vector2,
 }
 
 impl Obstacle {
@@ -29,72 +67,27 @@ impl Obstacle {
         }
     }
 
-    pub fn new(kind: ObstacleType) -> Self {
-        let position = Vector2::zero();
-        let direction = Vector2::zero();
-
-        match kind {
-            ObstacleType::LaunchDebris => Obstacle {
-                kind,
-                position,
-                direction,
-                aabb: Rectangle {
-                    x: 0.0,
-                    y: 0.0,
-                    width: 26.0,
-                    height: 20.0,
-                },
-                speed: 0.0,
-                rel_speed: 0.0,
-                rel_sign: 1.0,
-                is_in_destruction_range: false,
-            },
-            ObstacleType::FlockOfBirds => Obstacle {
-                kind,
-                position,
-                direction,
-                aabb: Rectangle {
-                    x: 0.0,
-                    y: 0.0,
-                    width: 40.0,
-                    height: 24.0,
-                },
-                speed: 0.0,
-                rel_speed: 0.0,
-                rel_sign: 1.0,
-                is_in_destruction_range: false,
-            },
-            ObstacleType::WeatherBallon => Obstacle {
-                kind,
-                position,
-                direction,
-                aabb: Rectangle {
-                    x: 0.0,
-                    y: 0.0,
-                    width: 50.0,
-                    height: 60.0,
-                },
-                speed: 0.0,
-                rel_speed: 0.0,
-                rel_sign: 1.0,
-                is_in_destruction_range: false,
-            },
-
-            ObstacleType::Drone => Obstacle {
-                kind,
-                position,
-                direction,
-                aabb: Rectangle {
-                    x: 0.0,
-                    y: 0.0,
-                    width: 20.0,
-                    height: 20.0,
-                },
-                speed: 0.0,
-                rel_speed: 0.0,
-                rel_sign: 1.0,
-                is_in_destruction_range: false,
-            },
+    pub fn new(
+        kind: ObstacleType,
+        position: Vector2,
+        direction: Vector2,
+        speed: f32,
+        rel_speed: f32,
+        rel_sign: f32,
+        movement_pattern: MovementPattern,
+    ) -> Self {
+        Self {
+            kind,
+            position,
+            direction,
+            spawn_position: position,
+            aabb: kind.aabb(),
+            speed,
+            rel_speed,
+            rel_sign,
+            is_in_destruction_range: false,
+            movement_pattern,
+            movement_time: 0.0,
         }
     }
 }

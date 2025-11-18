@@ -1,9 +1,13 @@
-use crate::{core::game_zone::GameZone, entities::obstacle::ObstacleType};
+use crate::{
+    core::game_zone::GameZone,
+    entities::obstacle::{MovementPattern, ObstacleType},
+};
 
 pub struct ObstacleSpawnParams {
     pub kind: ObstacleType,
     pub weight: u32,
     pub speed_range: (f32, f32),
+    pub movement_pattern: MovementPattern,
 }
 
 pub struct ZoneSpawnConfig {
@@ -29,11 +33,13 @@ static GROUND_ZONE_SPAWN_CONFIG: ZoneSpawnConfig = ZoneSpawnConfig {
             kind: ObstacleType::LaunchDebris,
             weight: 50,
             speed_range: (50.0, 100.0),
+            movement_pattern: MovementPattern::LinearDiagnal,
         },
         ObstacleSpawnParams {
             kind: ObstacleType::FlockOfBirds,
             weight: 30,
-            speed_range: (50.0, 100.0),
+            speed_range: (10.0, 25.0),
+            movement_pattern: MovementPattern::LinearHorizontal,
         },
     ],
 };
@@ -44,6 +50,7 @@ static TROPOSPHERE_ZONE_SPAWN_CONFIG: ZoneSpawnConfig = ZoneSpawnConfig {
         kind: ObstacleType::LaunchDebris,
         weight: 50,
         speed_range: (50.0, 100.0),
+        movement_pattern: MovementPattern::Static,
     }],
 };
 
@@ -53,6 +60,7 @@ static STRATOSPHERE_ZONE_SPAWN_CONFIG: ZoneSpawnConfig = ZoneSpawnConfig {
         kind: ObstacleType::LaunchDebris,
         weight: 50,
         speed_range: (50.0, 100.0),
+        movement_pattern: MovementPattern::Static,
     }],
 };
 
@@ -62,6 +70,7 @@ static LOW_ORBIT_ZONE_SPAWN_CONFIG: ZoneSpawnConfig = ZoneSpawnConfig {
         kind: ObstacleType::LaunchDebris,
         weight: 50,
         speed_range: (50.0, 100.0),
+        movement_pattern: MovementPattern::Static,
     }],
 };
 
@@ -71,6 +80,7 @@ static HIGH_ORBIT_ZONE_SPAWN_CONFIG: ZoneSpawnConfig = ZoneSpawnConfig {
         kind: ObstacleType::LaunchDebris,
         weight: 50,
         speed_range: (50.0, 100.0),
+        movement_pattern: MovementPattern::Static,
     }],
 };
 
@@ -80,5 +90,6 @@ static DEEP_SPACE_ZONE_SPAWN_CONFIG: ZoneSpawnConfig = ZoneSpawnConfig {
         kind: ObstacleType::LaunchDebris,
         weight: 50,
         speed_range: (50.0, 100.0),
+        movement_pattern: MovementPattern::Static,
     }],
 };
