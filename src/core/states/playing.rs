@@ -1,7 +1,7 @@
 use crate::{
     core::{
         game_state::{GameState, V_HEIGHT, V_WIDTH},
-        perk::{Perk, PerkData, PerkType, StatModifiers},
+        perk::{Perk, PerkData, StatModifiers},
     },
     entities::{obstacle::Obstacle, player::Player},
     systems::input::InputState,
@@ -50,17 +50,7 @@ impl PlayingState {
             player: Player::new((V_WIDTH as f32) * 0.5, (V_HEIGHT as f32) * 0.8),
 
             obstacles: vec![],
-            perks: vec![Perk {
-                kind: PerkType::Shield,
-                duration: None,
-                stacks: 1,
-                data: PerkData::Shield {
-                    max_charges: 1,
-                    charges: 1,
-                    recharge_time: 1.0,
-                    recharge_timer: 1.0,
-                },
-            }],
+            perks: vec![],
             stat_mods: StatModifiers::default(),
         }
     }
@@ -90,6 +80,10 @@ pub fn update(state: &mut PlayingState, input: &InputState, dt: f32, gt: f64) ->
     crate::systems::combat::update(state, dt, gt);
     crate::systems::spawn::update(state, dt);
     crate::systems::particle::update(state, dt);
+
+    if state.hp <= 0 {
+        return Some(GameState::GameOver);
+    }
 
     None
 }

@@ -79,4 +79,15 @@ impl Renderer {
         let x = self.screen_rect.width as i32 - d.measure_text("88 FPS", 24);
         d.draw_fps(x, 0);
     }
+
+    pub fn screen_to_world_pos(&self, screen_pos: Vector2) -> Vector2 {
+        Vector2::new(
+            (screen_pos.x - self.screen_rect.x) / self.scale,
+            (screen_pos.y - self.screen_rect.y) / self.scale,
+        )
+    }
+
+    pub fn world_to_screen_pos(&self, world_pos: Vector2) -> Vector2 {
+        Vector2::new(world_pos.x * self.scale, world_pos.y * self.scale)
+    }
 }
